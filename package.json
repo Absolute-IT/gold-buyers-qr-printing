@@ -8,7 +8,9 @@
     "lint": "eslint src --config eslint.config.js",
     "fix": "eslint src --fix --config eslint.config.js",
     "build": "tsc -p .",
-    "start": "pnpm build && DEBUG=* node ./dist/index.js",
+    "start": "pnpm build && node ./dist/index.js",
+    "start:dev": "pnpm build && DEBUG=* node ./dist/index.js",
+    "start:polling": "pnpm build && node ./dist/index.js",
     "prepare": "pnpm build"
   },
   "imports": {
@@ -23,6 +25,10 @@
     "#types/*": [
       "./dist/types/*.js",
       "./src/types/*.d.ts"
+    ],
+    "#services/*": [
+      "./dist/services/*.js",
+      "./src/services/*.ts"
     ]
   },
   "keywords": [],
