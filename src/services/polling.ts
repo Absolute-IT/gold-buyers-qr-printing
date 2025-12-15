@@ -52,7 +52,7 @@ export class PollingService {
 		// Load configuration from environment
 		this.config = {
 			apiEndpoint: process.env.API_ENDPOINT || 'http://localhost:4000/v1/label-printer/count',
-			pollInterval: parseInt(process.env.POLL_INTERVAL || '15000', 10),
+			pollInterval: parseInt(process.env.POLL_INTERVAL || '5000', 10),
 			maxRetries: parseInt(process.env.MAX_RETRIES || '5', 10),
 			retryDelay: parseInt(process.env.RETRY_DELAY || '5000', 10),
 		};

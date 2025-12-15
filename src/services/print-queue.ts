@@ -51,6 +51,9 @@ export class PrintQueueManager {
 		try {
 			console.log(`[Print Queue] Starting batch print: ${count} labels`);
 
+			// Check printer status and detect current label before printing
+			await this.checkPrinter();
+
 			// Print each label sequentially
 			for (let i = 0; i < count; i++) {
 				await this.printSingleLabel(i + 1, count);
