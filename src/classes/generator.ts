@@ -4,7 +4,8 @@ import {
 	queryPrinterStatus,
 	hasStatusError,
 	getStatusErrorMessage,
-	detectLabelWidth
+	detectLabelWidth,
+	type LabelWidth
 } from "node-brother-label-printer";
 import QRCode from "qrcode-esm";
 import { v7 } from "uuid";
@@ -66,18 +67,54 @@ class Generator {
 	}
 
 	/**
+	 * Detect current label width from printer
+	 */
+	private async detectCurrentLabelWidth(): Promise<LabelWidth> {
+		try {
+			const printer = detectSingleBrotherPrinter();
+			if (!printer) {
+				console.warn('No Brother printer detected, using fallback label width');
+				return "62-mm-wide continuous";
+			}
+
+			// Type assertion required as device is typed as 'unknown' to avoid USB dependency
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/no-explicit-any
+			const status = await queryPrinterStatus(printer.device as any);
+			
+			if (hasStatusError(status)) {
+				const errorMsg = getStatusErrorMessage(status);
+				console.warn(`Printer error during label detection: ${errorMsg}, using fallback`);
+				return "62-mm-wide continuous";
+			}
+
+			const detectedLabel = detectLabelWidth(status);
+			if (detectedLabel) {
+				console.log(`Detected label width: ${detectedLabel}`);
+				return detectedLabel;
+			}
+
+			console.warn('Could not detect label width, using fallback');
+			return "62-mm-wide continuous";
+		} catch (error) {
+			console.warn('Label detection failed:', error, '- using fallback');
+			return "62-mm-wide continuous";
+		}
+	}
+
+	/**
 	 * Print a PNG file using auto-detection for printer and media
 	 */
 	async printFile(filename: string) {
 		try {
+			// Detect current label width before each print
+			const labelWidth = await this.detectCurrentLabelWidth();
+			
 			// Use the new auto-detection API (recommended)
 			await printPngFileAuto({
 				filename: filename,
 				options: { 
 					landscape: false,
-					// labelWidth is auto-detected from loaded media
-					// Fallback to 62mm if auto-detection fails
-					labelWidth: "62-mm-wide continuous",
+					labelWidth: labelWidth,
 					blackwhiteThreshold: 128
 				}
 			});

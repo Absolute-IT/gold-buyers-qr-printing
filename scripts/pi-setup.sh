@@ -127,6 +127,44 @@ if ! command -v git &> /dev/null; then
     print_success "Git installed"
 fi
 
+# Install libusb for USB device access
+print_header "Installing USB Support Libraries"
+apt-get install -y libusb-1.0-0 libusb-1.0-0-dev udev
+print_success "USB libraries installed"
+
+# Configure USB permissions for Brother printers
+print_header "Configuring USB Permissions"
+cat > /etc/udev/rules.d/99-brother-printer.rules <<EOF
+# Brother QL-series label printers
+# Unbind usblp kernel driver and set permissions for direct USB access
+SUBSYSTEM=="usb", ATTR{idVendor}=="04f9", MODE="0666", GROUP="plugdev", RUN+="/bin/sh -c 'echo -n \$kernel > /sys/bus/usb/drivers/usblp/unbind 2>/dev/null || true'"
+EOF
+
+# Add service user to plugdev group
+usermod -a -G plugdev ${SERVICE_USER}
+print_success "USB permissions configured"
+
+# Blacklist usblp module to prevent automatic loading
+print_header "Configuring Kernel Module Blacklist"
+cat > /etc/modprobe.d/blacklist-usblp.conf <<EOF
+# Blacklist usblp driver for Brother label printers
+# This allows direct USB access via libusb
+blacklist usblp
+EOF
+print_success "usblp module blacklisted"
+
+# Unload usblp module if currently loaded
+if lsmod | grep -q usblp; then
+    print_info "Unloading usblp kernel module..."
+    rmmod usblp 2>/dev/null || true
+    print_success "usblp module unloaded"
+fi
+
+# Reload udev rules
+udevadm control --reload-rules
+udevadm trigger
+print_success "udev rules reloaded"
+
 # Create installation directory
 print_header "Setting up Installation Directory"
 if [ -d "${INSTALL_DIR}" ]; then
@@ -231,6 +269,14 @@ print_header "Installation Complete!"
 
 echo ""
 echo -e "${GREEN}Service is now running!${NC}"
+echo ""
+echo -e "${YELLOW}⚠ IMPORTANT: USB Device Access${NC}"
+echo "  The usblp kernel module has been blacklisted to allow direct USB access."
+echo "  If the printer is currently connected, please:"
+echo "  1. Unplug the Brother label printer"
+echo "  2. Wait 3 seconds"
+echo "  3. Plug it back in"
+echo "  This ensures the new USB configuration takes effect."
 echo ""
 echo "Useful commands:"
 echo "  View status:  pm2 status"
