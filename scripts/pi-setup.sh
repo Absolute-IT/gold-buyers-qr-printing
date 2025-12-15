@@ -70,7 +70,7 @@ echo "  API Endpoint: ${API_ENDPOINT}"
 echo "  Install Directory: ${INSTALL_DIR}"
 echo "  Service User: ${SERVICE_USER}"
 echo ""
-read -p "Continue with installation? (y/N) " -n 1 -r
+read -p "Continue with installation? (y/N) " -n 1 -r </dev/tty
 echo ""
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     print_info "Installation cancelled"
@@ -131,7 +131,7 @@ fi
 print_header "Setting up Installation Directory"
 if [ -d "${INSTALL_DIR}" ]; then
     print_info "Directory ${INSTALL_DIR} already exists"
-    read -p "Remove existing installation and reinstall? (y/N) " -n 1 -r
+    read -p "Remove existing installation and reinstall? (y/N) " -n 1 -r </dev/tty
     echo ""
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         # Stop and delete PM2 process if it exists
