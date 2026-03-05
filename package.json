@@ -11,6 +11,8 @@
     "start": "pnpm build && node ./dist/index.js",
     "start:dev": "pnpm build && DEBUG=* node ./dist/index.js",
     "start:polling": "pnpm build && node ./dist/index.js",
+    "print:1": "pnpm build && PRINT_COUNT=1 node ./dist/print.js",
+    "print:10": "pnpm build && PRINT_COUNT=10 node ./dist/print.js",
     "prepare": "pnpm build"
   },
   "imports": {

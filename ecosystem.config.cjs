@@ -8,6 +8,7 @@
 module.exports = {
 	apps: [{
 		name: 'gb-label-printer',
+		cwd: __dirname,
 		script: './dist/index.js',
 		instances: 1,
 		autorestart: true,
@@ -16,9 +17,9 @@ module.exports = {
 		env: {
 			NODE_ENV: 'production'
 		},
-		error_file: '/var/log/gb-label-printer-error.log',
-		out_file: '/var/log/gb-label-printer-out.log',
-		log_file: '/var/log/gb-label-printer-combined.log',
+		error_file: './logs/gb-label-printer-error.log',
+		out_file: './logs/gb-label-printer-out.log',
+		log_file: './logs/gb-label-printer-combined.log',
 		time: true,
 		// Restart strategies
 		exp_backoff_restart_delay: 100,

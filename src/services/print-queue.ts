@@ -76,7 +76,7 @@ export class PrintQueueManager {
 		try {
 			// Generate unique GBTID
 			const uuid = v7();
-			const humanId = randomString(8);
+			const humanId = randomString(4);
 			const gbtid = `gbtid://${uuid}:${humanId}`;
 
 			console.log(`[Print Queue] Printing label ${current}/${total}: ${humanId} (${uuid})`);
