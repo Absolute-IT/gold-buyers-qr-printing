@@ -2,6 +2,9 @@
 
 Automated QR code label printing service for Gold Buyers item tracking system. Interfaces with a Brother label printer via Raspberry Pi to print GBTID (Gold Buyers Tracking ID) labels on demand.
 
+> [!INFO]
+> Raspberry Pi is `ssh pi@gold-buyers-printer` with password `qwert54321`. Program is stored in `/opt/gb-label-printer/` directory. 
+
 ## Overview
 
 This service continuously polls the Gold Buyers API for label print requests and automatically prints QR code labels when requested through the web application. Each label contains a unique GBTID consisting of a UUIDv7 and a human-readable alphanumeric ID.

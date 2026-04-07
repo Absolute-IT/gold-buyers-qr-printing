@@ -13,7 +13,8 @@
     "start:polling": "pnpm build && node ./dist/index.js",
     "print:1": "pnpm build && PRINT_COUNT=1 node ./dist/print.js",
     "print:10": "pnpm build && PRINT_COUNT=10 node ./dist/print.js",
-    "prepare": "pnpm build"
+    "prepare": "pnpm build",
+    "pm2:reset": "pm2 delete gb-label-printer && pm2 start ecosystem.config.cjs && pm2 save"
   },
   "imports": {
     "#classes/*": [
